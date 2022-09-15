@@ -6,7 +6,7 @@ namespace line_extraction
 ///////////////////////////////////////////////////////////////////////////////
 // Constructor / destructor
 ///////////////////////////////////////////////////////////////////////////////
-Line::Line(const CachedData &c_data, const RangeData &r_data, const Params &params, 
+Line::Line(const CachedData &c_data, const RangeData &r_data, const Params &params,
            std::vector<unsigned int> indices):
   c_data_(c_data),
   r_data_(r_data),
@@ -81,7 +81,7 @@ double Line::length() const
 
 unsigned int Line::numPoints() const
 {
-  return indices_.size();  
+  return indices_.size();
 }
 
 void Line::projectEndpoints()
@@ -100,13 +100,14 @@ void Line::projectEndpoints()
 
 ///////////////////////////////////////////////////////////////////////////////
 // Methods for endpoint line fitting
+// 使用两个端点构造直线
 ///////////////////////////////////////////////////////////////////////////////
 void Line::endpointFit()
 {
-  start_[0] = r_data_.xs[indices_[0]]; 
-  start_[1] = r_data_.ys[indices_[0]]; 
-  end_[0] = r_data_.xs[indices_.back()]; 
-  end_[1] = r_data_.ys[indices_.back()]; 
+  start_[0] = r_data_.xs[indices_[0]];
+  start_[1] = r_data_.ys[indices_[0]];
+  end_[0] = r_data_.xs[indices_.back()];
+  end_[1] = r_data_.ys[indices_.back()];
   angleFromEndpoints();
   radiusFromEndpoints();
 }
@@ -117,6 +118,7 @@ void Line::angleFromEndpoints()
   if (fabs(end_[0] - start_[0]) > 1e-9)
   {
     slope = (end_[1] - start_[1]) / (end_[0] - start_[0]);
+    // 归一化角度至[0, PI]
     angle_ = pi_to_pi(atan(slope) + M_PI/2);
   }
   else
@@ -144,7 +146,7 @@ void Line::leastSqFit()
   double prev_radius = 0.0;
   double prev_angle = 0.0;
   while (fabs(radius_ - prev_radius) > params_.least_sq_radius_thresh ||
-         fabs(angle_ - prev_angle) > params_.least_sq_angle_thresh) 
+         fabs(angle_ - prev_angle) > params_.least_sq_angle_thresh)
   {
     prev_radius = radius_;
     prev_angle = angle_;
@@ -173,12 +175,12 @@ double Line::angleIncrement()
   const std::vector<double> &c = p_params_.c;
   const std::vector<double> &s = p_params_.s;
 
-  double numerator = 0; 
+  double numerator = 0;
   double denominator = 0;
   for (std::size_t i = 0; i < a.size(); ++i)
   {
     numerator += (b[i] * ap[i] - a[i] * bp[i]) / pow(b[i], 2);
-    denominator += ((app[i] * b[i] - a[i] * bpp[i]) * b[i] - 
+    denominator += ((app[i] * b[i] - a[i] * bpp[i]) * b[i] -
                     2 * (ap[i] * b[i] - a[i] * bp[i]) * bp[i]) / pow(b[i], 3);
   }
   return -(numerator/denominator);
@@ -224,10 +226,10 @@ void Line::calcPointCovariances()
     phi = c_data_.bearings[*cit]; // bearing
     var_r = params_.range_var; // range variance
     var_phi = params_.bearing_var; // bearing variance
-    boost::array<double, 4> Q; 
+    boost::array<double, 4> Q;
     Q[0] = pow(r, 2) * var_phi * pow(sin(phi), 2) + var_r * pow(cos(phi), 2);
     Q[1] = -pow(r, 2) * var_phi * sin(2 * phi) / 2.0 + var_r * sin(2 * phi) / 2.0;
-    Q[2] = Q[1]; 
+    Q[2] = Q[1];
     Q[3] = pow(r, 2) * var_phi * pow(cos(phi), 2) + var_r * pow(sin(phi), 2);
     point_covs_.push_back(Q);
   }
@@ -297,7 +299,7 @@ void Line::radiusFromLeastSq()
     phi = c_data_.bearings[*cit]; // bearing
     radius_ += r * cos(angle_ - phi) / point_scalar_vars_[cit - indices_.begin()]; // cit to index
   }
-  
+
   radius_ *= p_rr_;
 }
 

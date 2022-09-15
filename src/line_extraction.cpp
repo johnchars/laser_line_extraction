@@ -20,7 +20,7 @@ LineExtraction::~LineExtraction()
 ///////////////////////////////////////////////////////////////////////////////
 // Main run function
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::extractLines(std::vector<Line>& lines) 
+void LineExtraction::extractLines(std::vector<Line>& lines)
 {
   // Resets
   filtered_indices_ = c_data_.indices;
@@ -45,7 +45,7 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   {
     it->leastSqFit();
   }
-  
+
   // If there is more than one line, check if lines should be merged based on the merging criteria
   if (lines_.size() > 1)
   {
@@ -74,7 +74,7 @@ void LineExtraction::setRangeData(const std::vector<double>& ranges)
   r_data_.ranges = ranges;
   r_data_.xs.clear();
   r_data_.ys.clear();
-  for (std::vector<unsigned int>::const_iterator cit = c_data_.indices.begin(); 
+  for (std::vector<unsigned int>::const_iterator cit = c_data_.indices.begin();
        cit != c_data_.indices.end(); ++cit)
   {
     r_data_.xs.push_back(c_data_.cos_bearings[*cit] * ranges[*cit]);
@@ -151,7 +151,7 @@ double LineExtraction::chiSquared(const Eigen::Vector2d &dL, const Eigen::Matrix
 
 double LineExtraction::distBetweenPoints(unsigned int index_1, unsigned int index_2)
 {
-  return sqrt(pow(r_data_.xs[index_1] - r_data_.xs[index_2], 2) + 
+  return sqrt(pow(r_data_.xs[index_1] - r_data_.xs[index_2], 2) +
               pow(r_data_.ys[index_1] - r_data_.ys[index_2], 2));
 }
 
@@ -161,7 +161,7 @@ double LineExtraction::distBetweenPoints(unsigned int index_1, unsigned int inde
 void LineExtraction::filterCloseAndFarPoints()
 {
   std::vector<unsigned int> output;
-  for (std::vector<unsigned int>::const_iterator cit = filtered_indices_.begin(); 
+  for (std::vector<unsigned int>::const_iterator cit = filtered_indices_.begin();
        cit != filtered_indices_.end(); ++cit)
   {
     const double& range = r_data_.ranges[*cit];
@@ -207,7 +207,7 @@ void LineExtraction::filterOutlierPoints()
     // Check if point is an outlier
 
     if (fabs(r_data_.ranges[p_i] - r_data_.ranges[p_j]) > params_.outlier_dist &&
-        fabs(r_data_.ranges[p_i] - r_data_.ranges[p_k]) > params_.outlier_dist) 
+        fabs(r_data_.ranges[p_i] - r_data_.ranges[p_k]) > params_.outlier_dist)
     {
       // Check if it is close to line connecting its neighbours
       std::vector<unsigned int> line_indices;

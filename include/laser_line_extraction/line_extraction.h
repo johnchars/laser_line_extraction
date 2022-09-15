@@ -5,6 +5,7 @@
 #include <vector>
 #include <boost/array.hpp>
 #include <Eigen/Dense>
+#include <eigen3/Eigen/Geometry>
 #include "laser_line_extraction/utilities.h"
 #include "laser_line_extraction/line.h"
 
